@@ -8,6 +8,7 @@ tenntennさんが公開されている「家計簿アプリを作ろう」のハ
 
 ## 開発環境
 - PC: MacBook Pro (13-inch, 2019, Four Thunderbolt 3 ports)
+- OS: MacOS Big Sur Version 11.4
 - Go: 1.16.5
 
 ## 機能一覧(現段階)
