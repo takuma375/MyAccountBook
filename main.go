@@ -2,6 +2,12 @@ package main
 
 import "fmt"
 
+// 値段と品目を一緒に扱うためにItemという構造体の型を定義する
+type Item struct {
+	Category string
+	Price    int
+}
+
 func main() {
 	// 品目を入れる変数を定義する
 	var category string
