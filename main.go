@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // 値段と品目を一緒に扱うためにItemという構造体の型を定義する
@@ -41,7 +44,9 @@ func main() {
 	}
 
 	// showItems()を呼び出し、データの一覧表示をする
-	// showItems(items)
+	if err := showItems(); err != nil {
+		log.Fatal(err)
+	}
 
 }
 
@@ -69,18 +74,49 @@ func inputItem(file *os.File) error {
 	return nil
 }
 
-// 入力されたデータの一覧表示を行う関数を新たに作成する
-func showItems(items []Item) {
+// 入力されたデータの一覧表示を行う関数
+// データはファイルから直接参照する
+func showItems() error {
+
+	// "accountbook.txt"を読み込み専用で開く
+	file, err := os.Open("accountbook.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// "==========="と出力して改行する
 	fmt.Println("===========")
 
-	// itemsの長さだけ、for文を回し、データを一覧表示する。
-	// 「コーヒー:120円」のように表示する。
-	for i := 0; i < len(items); i++ {
-		fmt.Printf("%s:%d円\n", items[i].Category, items[i].Price)
-	}
+	// ファイルからデータを読み込む
+	scanner := bufio.NewScanner(file)
 
+	for scanner.Scan() {
+		// 1行分のデータを取り出す
+		line := scanner.Text()
+
+		splited := strings.Split(line, " ")
+		if len(splited) != 2 {
+			return fmt.Errorf("パースに失敗しました")
+		}
+
+		// categoryを取り出す
+		category := splited[0]
+		// priceを取り出す。sting型からint型に変換することを忘れない
+		price, err := strconv.Atoi(splited[1])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// 「コーヒー:100円」のように表示する
+		fmt.Printf("%s:%d円\n", category, price)
+
+	}
 	// 「===========」と出力して改行する
 	fmt.Println("===========")
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
 }
