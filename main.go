@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+)
 
 // 値段と品目を一緒に扱うためにItemという構造体の型を定義する
 type Item struct {
@@ -8,9 +12,16 @@ type Item struct {
 	Price    int
 }
 
-// 複数のアイテム入力に対応する
+// データのファイルへの保存機能を実装する
 
 func main() {
+
+	// "accountbook.txt"という名前のファイルを書き込み用で開く
+	file, err := os.Create("accountbook.txt")
+	if err != nil {
+		// エラーを出力して終了
+		log.Fatal(err)
+	}
 
 	// 入力するデータの件数を指定してもらうため、変数の定義と代入を行う
 	var n int
