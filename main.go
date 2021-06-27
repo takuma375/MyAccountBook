@@ -8,25 +8,33 @@ type Item struct {
 	Price    int
 }
 
+// 複数のアイテム入力に対応する
+
 func main() {
 
-	// inputItem()を呼び出し、結果をitemという変数に代入する
-	item := inputItem()
+	// 入力するデータの件数を指定してもらうため、変数の定義と代入を行う
+	var n int
+	fmt.Print("何件入力しますか？>")
+	fmt.Scan(&n)
 
-	// "==========="と出力して改行する
-	fmt.Println("===========")
+	// 複数のItem型の値を記録するために、itemsという名前のItem型のスライスの変数を定義する
+	// 長さが0で容量がnのスライスを作る
+	var items []Item
+	items = make([]Item, 0, n)
 
-	// 品目に「コーヒー」、値段に「100」と入力した場合に
-	// 「コーヒーに100円使いました」と表示する
-	fmt.Printf("%sに%d円使いました\n", item.Category, item.Price)
+	// inputItem()を呼び出し、複数の入力を記録できるようにする
+	for i := 0; i < cap(items); i++ {
+		items = inputItem(items)
+	}
 
-	// 「===========」と出力して改行する
-	fmt.Println("===========")
+	// showItems()を呼び出し、データの一覧表示をする
+	showItems(items)
 
 }
 
 // データの入力を行う関数を定義する
-func inputItem() Item {
+// 複数のアイテムの入力に対応するため、引数、戻り値にスライスが使えるように変更
+func inputItem(items []Item) []Item {
 	// 入力された値を仮保管するItem型の変数を定義
 	var item Item
 
@@ -38,5 +46,23 @@ func inputItem() Item {
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
 
-	return item
+	items = append(items, item)
+
+	return items
+}
+
+// 入力されたデータの一覧表示を行う関数を新たに作成する
+func showItems(items []Item) {
+
+	// "==========="と出力して改行する
+	fmt.Println("===========")
+
+	// itemsの長さだけ、for文を回し、データを一覧表示する。
+	// 「コーヒー:120円」のように表示する。
+	for i := 0; i < len(items); i++ {
+		fmt.Printf("%s:%d円\n", items[i].Category, items[i].Price)
+	}
+
+	// 「===========」と出力して改行する
+	fmt.Println("===========")
 }
