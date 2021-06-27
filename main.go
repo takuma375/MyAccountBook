@@ -27,15 +27,8 @@ func main() {
 		items = inputItem(items)
 	}
 
-	// "==========="と出力して改行する
-	fmt.Println("===========")
-
-	// 品目に「コーヒー」、値段に「100」と入力した場合に
-	// 「コーヒーに100円使いました」と表示する
-	fmt.Printf("%sに%d円使いました\n", item.Category, item.Price)
-
-	// 「===========」と出力して改行する
-	fmt.Println("===========")
+	// showItems()を呼び出し、データの一覧表示をする
+	showItems(items)
 
 }
 
@@ -56,4 +49,20 @@ func inputItem(items []Item) []Item {
 	items = append(items, item)
 
 	return items
+}
+
+// 入力されたデータの一覧表示を行う関数を新たに作成する
+func showItems(items []Item) {
+
+	// "==========="と出力して改行する
+	fmt.Println("===========")
+
+	// itemsの長さだけ、for文を回し、データを一覧表示する。
+	// 「コーヒー:120円」のように表示する。
+	for i := 0; i < len(items); i++ {
+		fmt.Printf("%s:%d円\n", items[i].Category, items[i].Price)
+	}
+
+	// 「===========」と出力して改行する
+	fmt.Println("===========")
 }
