@@ -22,8 +22,10 @@ func main() {
 	var items []Item
 	items = make([]Item, 0, n)
 
-	// inputItem()を呼び出し、結果をitemという変数に代入する
-	item := inputItem()
+	// inputItem()を呼び出し、複数の入力を記録できるようにする
+	for i := 0; i < cap(items)-1; i++ {
+		items = inputItem(items)
+	}
 
 	// "==========="と出力して改行する
 	fmt.Println("===========")
@@ -38,7 +40,8 @@ func main() {
 }
 
 // データの入力を行う関数を定義する
-func inputItem() Item {
+// 複数のアイテムの入力に対応するため、引数、戻り値にスライスが使えるように変更
+func inputItem(items []Item) []Item {
 	// 入力された値を仮保管するItem型の変数を定義
 	var item Item
 
@@ -50,5 +53,7 @@ func inputItem() Item {
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
 
-	return item
+	items = append(items, item)
+
+	return items
 }
