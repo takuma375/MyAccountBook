@@ -28,24 +28,26 @@ func main() {
 	fmt.Print("何件入力しますか？>")
 	fmt.Scan(&n)
 
-	// 複数のItem型の値を記録するために、itemsという名前のItem型のスライスの変数を定義する
-	// 長さが0で容量がnのスライスを作る
-	var items []Item
-	items = make([]Item, 0, n)
+	// inputItem()を呼び出し、ファイルに入力を保存する
+	for i := 0; i < n; i++ {
+		if err := inputItem(file); err != nil {
+			log.Fatal(err)
+		}
+	}
 
-	// inputItem()を呼び出し、複数の入力を記録できるようにする
-	for i := 0; i < cap(items); i++ {
-		items = inputItem(items)
+	// ファイルを閉じる
+	if err := file.Close(); err != nil {
+		log.Fatal(err)
 	}
 
 	// showItems()を呼び出し、データの一覧表示をする
-	showItems(items)
+	// showItems(items)
 
 }
 
 // データの入力を行う関数を定義する
-// 複数のアイテムの入力に対応するため、引数、戻り値にスライスが使えるように変更
-func inputItem(items []Item) []Item {
+// データの保存はテキストファイルに行うため、*os.File型の引数を受け取り、エラー処理のためのerror型の返り値を返すように変更
+func inputItem(file *os.File) error {
 	// 入力された値を仮保管するItem型の変数を定義
 	var item Item
 
@@ -57,9 +59,14 @@ func inputItem(items []Item) []Item {
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
 
-	items = append(items, item)
+	// ファイルに「品目 値段」のように書き出す
+	line := fmt.Sprintf("%s %d\n", item.Category, item.Price)
+	if _, err := file.WriteString(line); err != nil {
+		log.Fatal(err)
+	}
 
-	return items
+	// 何もエラーが起こらなかったことを表すnilを返す
+	return nil
 }
 
 // 入力されたデータの一覧表示を行う関数を新たに作成する
