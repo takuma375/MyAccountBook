@@ -8,7 +8,19 @@ type Item struct {
 	Price    int
 }
 
+// 複数のアイテム入力に対応する
+
 func main() {
+
+	// 入力するデータの件数を指定してもらうため、変数の定義と代入を行う
+	var n int
+	fmt.Print("何件入力しますか？>")
+	fmt.Scan(&n)
+
+	// 複数のItem型の値を記録するために、itemsという名前のItem型のスライスの変数を定義する
+	// 長さが0で容量がnのスライスを作る
+	var items []Item
+	items = make([]Item, 0, n)
 
 	// inputItem()を呼び出し、結果をitemという変数に代入する
 	item := inputItem()
