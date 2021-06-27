@@ -23,7 +23,7 @@ func main() {
 	items = make([]Item, 0, n)
 
 	// inputItem()を呼び出し、複数の入力を記録できるようにする
-	for i := 0; i < cap(items)-1; i++ {
+	for i := 0; i < cap(items); i++ {
 		items = inputItem(items)
 	}
 
