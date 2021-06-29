@@ -2,8 +2,11 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // 家計簿の処理を行う型を新たに定義する
@@ -73,4 +76,30 @@ func (ab *Accountbook) GetItems(limit int) ([]*Item, error) {
 
 	// limit件よりも多い場合は、itemsの後方limit件だけ返す
 	return items[len(items)-limit : len(items) : len(items)], nil
+}
+
+// データをパースするためのメソッドを定義
+func (ab *Accountbook) parseLine(line string, item *Item) error {
+	// 1行をスペースで分割する処理を追加
+	splited := strings.Split(line, " ")
+
+	// 2つに分割できなかった場合は、エラーを返す
+	if len(splited) != 2 {
+		return errors.New("パースに失敗しました")
+	}
+
+	// 品目名を代入
+	category := splited[0]
+
+	// 値段を代入
+	price, err := strconv.Atoi(splited[1])
+	if err != nil {
+		return err
+	}
+
+	// 呼び出し元で指定されているポインタに値を代入する
+	item.Category = category
+	item.Price = price
+
+	return nil
 }
