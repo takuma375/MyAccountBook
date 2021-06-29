@@ -61,7 +61,12 @@ func (ab *Accountbook) GetItems(limit int) ([]*Item, error) {
 
 	// 読み込んだファイルを1行ずつ処理する
 	for scanner.Scan() {
-		// TODO: データのパースを行う関数を別途定義
+		// 1行ずつパースする
+		var item Item
+		if err := ab.parseLine(scanner.Text(), &item); err != nil {
+			return nil, err
+		}
+		items = append(items, &item)
 	}
 
 	// スキャナーでエラーが発生していないか確認
