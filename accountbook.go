@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -22,16 +21,18 @@ func (ab *Accountbook) AddItem(item *Item) error {
 	// 追記モードでファイルを開く
 	file, err := os.OpenFile(ab.fileName, os.O_APPEND|os.O_CREATE|os.O_RDONLY, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// 「品目 値段」の形式でファイルに出力する
 	if _, err := fmt.Fprintln(file, item.Category, item.Price); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// ファイルを閉じる
-	file.Close()
+	if err := file.Close(); err != nil {
+		return err
+	}
 
 	// 成功終了したことを伝えるため、nilを返す
 	return nil
