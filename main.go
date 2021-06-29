@@ -1,12 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
-	"strconv"
-	"strings"
 )
 
 // accountbook.goを用いて処理を分割する
@@ -37,48 +32,18 @@ func inputItem() *Item {
 }
 
 // 入力されたデータの一覧表示を行う関数
-// データはファイルから直接参照する
-func showItems() error {
-
-	// "accountbook.txt"を読み込み専用で開く
-	file, err := os.Open("accountbook.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+// accountbook.go内で処理されたデータを受け取り、出力する
+func showItems(items []*Item) {
 
 	// "==========="と出力して改行する
 	fmt.Println("===========")
 
-	// ファイルからデータを読み込む
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		// 1行分のデータを取り出す
-		line := scanner.Text()
-
-		splited := strings.Split(line, " ")
-		if len(splited) != 2 {
-			return fmt.Errorf("パースに失敗しました")
-		}
-
-		// categoryを取り出す
-		category := splited[0]
-		// priceを取り出す。sting型からint型に変換することを忘れない
-		price, err := strconv.Atoi(splited[1])
-		if err != nil {
-			log.Fatal(err)
-		}
-
+	for _, item := range items {
 		// 「コーヒー:100円」のように表示する
-		fmt.Printf("%s:%d円\n", category, price)
-
+		fmt.Printf("%s:%d円\n", item.Category, item.Price)
 	}
+
 	// 「===========」と出力して改行する
 	fmt.Println("===========")
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	return nil
 }
