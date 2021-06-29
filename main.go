@@ -1,58 +1,60 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
-	"strings"
 )
 
-// 値段と品目を一緒に扱うためにItemという構造体の型を定義する
-type Item struct {
-	Category string
-	Price    int
-}
-
-// データのファイルへの保存機能を実装する
+// accountbook.goを用いて処理を分割する
 
 func main() {
 
-	// "accountbook.txt"という名前のファイルを書き込み用で開く
-	file, err := os.Create("accountbook.txt")
-	if err != nil {
-		// エラーを出力して終了
-		log.Fatal(err)
-	}
+	// NewAccountBookを使用して、Accountbookを作成する
+	ab := NewAccountBook("accountbook.txt")
 
-	// 入力するデータの件数を指定してもらうため、変数の定義と代入を行う
-	var n int
-	fmt.Print("何件入力しますか？>")
-	fmt.Scan(&n)
+	// 以下のループにラベルを付ける
+LOOP:
+	for {
+		// モードを選択して実行できるようにする
+		var mode int
+		fmt.Println("[1]入力 [2]最新10件 [3]終了")
+		fmt.Print("> ")
+		fmt.Scan(&mode)
 
-	// inputItem()を呼び出し、ファイルに入力を保存する
-	for i := 0; i < n; i++ {
-		if err := inputItem(file); err != nil {
-			log.Fatal(err)
+		// modeによって処理を変える
+		switch mode {
+		case 1: // 入力
+			// データの入力件数を受け取る
+			var n int
+			fmt.Print("何件入力しますか? ")
+			fmt.Scan(&n)
+
+			for i := 0; i < n; i++ {
+				err := ab.AddItem(inputItem())
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "エラー", err)
+					// LOOPという名前のついたforから抜け出す
+					break LOOP
+				}
+			}
+		case 2: //最新10件
+			items, err := ab.GetItems(10)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "エラー", err)
+				break LOOP
+			}
+			showItems(items)
+		case 3: // 終了
+			fmt.Println("終了します")
+			os.Exit(0)
 		}
-	}
-
-	// ファイルを閉じる
-	if err := file.Close(); err != nil {
-		log.Fatal(err)
-	}
-
-	// showItems()を呼び出し、データの一覧表示をする
-	if err := showItems(); err != nil {
-		log.Fatal(err)
 	}
 
 }
 
-// データの入力を行う関数を定義する
-// データの保存はテキストファイルに行うため、*os.File型の引数を受け取り、エラー処理のためのerror型の返り値を返すように変更
-func inputItem(file *os.File) error {
+// データの入力を行う関数を定義する。データの保存処理などはAddItem関数が担うため、
+// ここでは入力の受け渡しを行う
+func inputItem() *Item {
 	// 入力された値を仮保管するItem型の変数を定義
 	var item Item
 
@@ -63,60 +65,25 @@ func inputItem(file *os.File) error {
 	// "値段>"と表示し、入力した結果を品目を入れる変数に代入する
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
+	fmt.Print("\n")
 
-	// ファイルに「品目 値段」のように書き出す
-	line := fmt.Sprintf("%s %d\n", item.Category, item.Price)
-	if _, err := file.WriteString(line); err != nil {
-		log.Fatal(err)
-	}
-
-	// 何もエラーが起こらなかったことを表すnilを返す
-	return nil
+	// 入力された結果を返す
+	return &item
 }
 
 // 入力されたデータの一覧表示を行う関数
-// データはファイルから直接参照する
-func showItems() error {
-
-	// "accountbook.txt"を読み込み専用で開く
-	file, err := os.Open("accountbook.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+// accountbook.go内で処理されたデータを受け取り、出力する
+func showItems(items []*Item) {
 
 	// "==========="と出力して改行する
 	fmt.Println("===========")
 
-	// ファイルからデータを読み込む
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		// 1行分のデータを取り出す
-		line := scanner.Text()
-
-		splited := strings.Split(line, " ")
-		if len(splited) != 2 {
-			return fmt.Errorf("パースに失敗しました")
-		}
-
-		// categoryを取り出す
-		category := splited[0]
-		// priceを取り出す。sting型からint型に変換することを忘れない
-		price, err := strconv.Atoi(splited[1])
-		if err != nil {
-			log.Fatal(err)
-		}
-
+	for _, item := range items {
 		// 「コーヒー:100円」のように表示する
-		fmt.Printf("%s:%d円\n", category, price)
-
+		fmt.Printf("%s:%d円\n", item.Category, item.Price)
 	}
+
 	// 「===========」と出力して改行する
 	fmt.Println("===========")
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	return nil
 }
