@@ -29,7 +29,7 @@ LOOP:
 			fmt.Print("何件入力しますか? ")
 			fmt.Scan(&n)
 
-			for i := 0; i <= n; i++ {
+			for i := 0; i < n; i++ {
 				err := ab.AddItem(inputItem())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, "エラー", err)
