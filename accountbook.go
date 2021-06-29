@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+// 値段と品目を一緒に扱うためにItemという構造体の型を定義する
+type Item struct {
+	Category string
+	Price    int
+}
+
 // 家計簿の処理を行う型を新たに定義する
 type Accountbook struct {
 	fileName string

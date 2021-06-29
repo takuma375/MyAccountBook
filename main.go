@@ -9,12 +9,6 @@ import (
 	"strings"
 )
 
-// 値段と品目を一緒に扱うためにItemという構造体の型を定義する
-type Item struct {
-	Category string
-	Price    int
-}
-
 // データのファイルへの保存機能を実装する
 
 func main() {
