@@ -65,6 +65,7 @@ func inputItem() *Item {
 	// "値段>"と表示し、入力した結果を品目を入れる変数に代入する
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
+	fmt.Print("\n")
 
 	// 入力された結果を返す
 	return &item
