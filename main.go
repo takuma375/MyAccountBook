@@ -9,38 +9,12 @@ import (
 	"strings"
 )
 
-// データのファイルへの保存機能を実装する
+// accountbook.goを用いて処理を分割する
 
 func main() {
 
-	// "accountbook.txt"という名前のファイルを書き込み用で開く
-	file, err := os.Create("accountbook.txt")
-	if err != nil {
-		// エラーを出力して終了
-		log.Fatal(err)
-	}
-
-	// 入力するデータの件数を指定してもらうため、変数の定義と代入を行う
-	var n int
-	fmt.Print("何件入力しますか？>")
-	fmt.Scan(&n)
-
-	// inputItem()を呼び出し、ファイルに入力を保存する
-	for i := 0; i < n; i++ {
-		if err := inputItem(file); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	// ファイルを閉じる
-	if err := file.Close(); err != nil {
-		log.Fatal(err)
-	}
-
-	// showItems()を呼び出し、データの一覧表示をする
-	if err := showItems(); err != nil {
-		log.Fatal(err)
-	}
+	// NewAccountBookを使用して、Accountbookを作成する
+	ab := NewAccountBook("accountbook.txt")
 
 }
 
