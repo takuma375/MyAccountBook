@@ -18,9 +18,9 @@ func main() {
 
 }
 
-// データの入力を行う関数を定義する
-// データの保存はテキストファイルに行うため、*os.File型の引数を受け取り、エラー処理のためのerror型の返り値を返すように変更
-func inputItem(file *os.File) error {
+// データの入力を行う関数を定義する。データの保存処理などはAddItem関数が担うため、
+// ここでは入力の受け渡しを行う
+func inputItem() *Item {
 	// 入力された値を仮保管するItem型の変数を定義
 	var item Item
 
@@ -32,14 +32,8 @@ func inputItem(file *os.File) error {
 	fmt.Print("値段>")
 	fmt.Scan(&item.Price)
 
-	// ファイルに「品目 値段」のように書き出す
-	line := fmt.Sprintf("%s %d\n", item.Category, item.Price)
-	if _, err := file.WriteString(line); err != nil {
-		log.Fatal(err)
-	}
-
-	// 何もエラーが起こらなかったことを表すnilを返す
-	return nil
+	// 入力された結果を返す
+	return &item
 }
 
 // 入力されたデータの一覧表示を行う関数
