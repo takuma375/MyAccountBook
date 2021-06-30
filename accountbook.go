@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"errors"
 	"fmt"
 	"os"
@@ -10,19 +11,21 @@ import (
 )
 
 // 値段と品目を一緒に扱うためにItemという構造体の型を定義する
+// 今回からRDBを使用するため、フィールドにIDを定義する
 type Item struct {
+	ID       int
 	Category string
 	Price    int
 }
 
-// 家計簿の処理を行う型を新たに定義する
+// 家計簿の処理を行う型を定義する。データの管理にはデータベースを使用する
 type Accountbook struct {
-	fileName string
+	db *sql.DB
 }
 
-// 新しいAccountbookを生成する関数を定義する
-func NewAccountBook(fileName string) *Accountbook {
-	return &Accountbook{fileName: fileName}
+// 新しいAccountbookを生成する関数を定義。
+func NewAccountBook(db *sql.DB) *Accountbook {
+	return &Accountbook{db: db}
 }
 
 // ファイルに新しいitemを追加するためのメソッドを定義する
