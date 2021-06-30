@@ -28,6 +28,22 @@ func NewAccountBook(db *sql.DB) *Accountbook {
 	return &Accountbook{db: db}
 }
 
+// データ管理のためのテーブルを作成するメソッドを定義
+func (ab *Accountbook) CreateTable() error {
+	const sqlStr = `CREATE TABLE IF NOT EXISTS items(
+		id        INTEGER PRIMARY KEY,
+		category  TEXT NOT NULL,
+		price     INTEGER NOT NULL
+	);`
+
+	_, err := ab.db.Exec(sqlStr)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ファイルに新しいitemを追加するためのメソッドを定義する
 func (ab *Accountbook) AddItem(item *Item) error {
 	// 追記モードでファイルを開く
