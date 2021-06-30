@@ -54,4 +54,29 @@ func (ab *Accountbook) AddItem(item *Item) error {
 // 最近追加したものを最大limit件だけItemを取得するメソッドを定義する。もしエラーが発生したら第2戻り値で返す
 func (ab *Accountbook) GetItems(limit int) ([]*Item, error) {
 
+	const sqlStr = `SELECT * FROM items ORDER BY id DESC LIMIT ?`
+	rows, err := ab.db.Query(sqlStr, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close() // 関数終了時にCloseする
+
+	var items []*Item
+
+	// rows.Next()を使用して1行ずつ取得した行を見る
+	for rows.Next() {
+		var item Item
+		if err := rows.Scan(&item.ID, &item.Category, &item.Price); err != nil {
+			return nil, err
+		}
+
+		items = append(items, &item)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
