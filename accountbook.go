@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"database/sql"
 	"errors"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -44,24 +43,15 @@ func (ab *Accountbook) CreateTable() error {
 	return nil
 }
 
-// ファイルに新しいitemを追加するためのメソッドを定義する
+// ファイルに新しいitemを追加するためのメソッドを定義する。RDBを使った仕様に変更する。
 func (ab *Accountbook) AddItem(item *Item) error {
-	// 追記モードでファイルを開く
-	file, err := os.OpenFile(ab.fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// SQLのInsert文を使って、データベースに値を保存する
+	// ?の部分にcategoryやpriceを代入できるようにする。
+	const sqlStr = `INSERT INTO items(category, price) VALUES (?,?);`
+	_, err := ab.db.Exec(sqlStr, item.Category, item.Price)
 	if err != nil {
 		return err
 	}
-
-	// 「品目 値段」の形式でファイルに出力する
-	if _, err := fmt.Fprintln(file, item.Category, item.Price); err != nil {
-		return err
-	}
-
-	// ファイルを閉じる
-	if err := file.Close(); err != nil {
-		return err
-	}
-
 	// 成功終了したことを伝えるため、nilを返す
 	return nil
 }
