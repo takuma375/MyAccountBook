@@ -80,3 +80,45 @@ func (ab *Accountbook) GetItems(limit int) ([]*Item, error) {
 
 	return items, nil
 }
+
+// 品目ごとに集計するメソッドを定義する
+func (ab *Accountbook) GetSummaries() ([]*Summary, error) {
+	const sqlStr = `
+		SELECT
+			category,
+			COUNT(1) as count,
+			SUM(price) as sum
+		FROM
+			items
+		GROUP BY
+			category`
+	rows, err := ab.db.Query(sqlStr)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close() // 関数終了時にCloseする
+
+	var summaries []*Summary
+	for rows.Next() {
+		var s Summary
+		err := rows.Scan(&s.Category, &s.Count, &s.Sum)
+		if err != nil {
+			return nil, err
+		}
+		summaries = append(summaries, &s)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return summaries, nil
+
+}
+
+// 集計したデータを扱う構造体Summaryを定義する
+type Summary struct {
+	Category string
+	Count    int
+	Sum      int
+}
