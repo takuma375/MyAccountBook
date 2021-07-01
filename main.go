@@ -17,13 +17,19 @@ func main() {
 	db, err := sql.Open(sqlite.DriverName, "accountbook.db")
 	if err != nil {
 		// 標準エラー出力にエラーメッセージを出力する
-		fmt.Fprintf(os.Stderr, "エラー", err)
+		fmt.Fprintln(os.Stderr, "エラー", err)
 		// ステータスコード1で終了
 		os.Exit(1)
 	}
 
 	// NewAccountBookを使用して、Accountbookを作成する
 	ab := NewAccountBook(db)
+
+	// テーブルを作成する処理を追加
+	if err := ab.CreateTable(); err != nil {
+		fmt.Fprintln(os.Stderr, "エラー", err)
+		os.Exit(1)
+	}
 
 	// 以下のループにラベルを付ける
 LOOP:
