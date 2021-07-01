@@ -1,16 +1,29 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
+
+	//SQLiteのドライバを使うために "github.com/tenntenn/sqlite"をインポートする
+	"github.com/tenntenn/sqlite"
 )
 
-// accountbook.goを用いて処理を分割する
+// データベースによるデータの保管
 
 func main() {
 
+	// データベースへの接続処理
+	db, err := sql.Open(sqlite.DriverName, "accountbook.db")
+	if err != nil {
+		// 標準エラー出力にエラーメッセージを出力する
+		fmt.Fprintf(os.Stderr, "エラー", err)
+		// ステータスコード1で終了
+		os.Exit(1)
+	}
+
 	// NewAccountBookを使用して、Accountbookを作成する
-	ab := NewAccountBook("accountbook.txt")
+	ab := NewAccountBook(db)
 
 	// 以下のループにラベルを付ける
 LOOP:
