@@ -98,8 +98,8 @@ func showItems(items []*Item) {
 	fmt.Println("===========")
 
 	for _, item := range items {
-		// 「コーヒー:100円」のように表示する
-		fmt.Printf("%s:%d円\n", item.Category, item.Price)
+		// itemsの要素を1つずつ取り出してitemに入れて繰り返す
+		fmt.Printf("[%04d]%s:%d円\n", item.ID, item.Category, item.Price)
 	}
 
 	// 「===========」と出力して改行する
