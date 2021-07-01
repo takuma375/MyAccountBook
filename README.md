@@ -10,7 +10,8 @@ tenntennさんが公開されている「家計簿アプリを作ろう」のハ
 - PC: MacBook Pro (13-inch, 2019, Four Thunderbolt 3 ports)
 - OS: MacOS Big Sur Version 11.4
 - Go: 1.16.5
+- SQLite3: 3.32.3
 
 ## 機能一覧(現段階)
 - コマンドラインツール
-    - 基本データ(品目, 値段)の入出力
+    - モードを選択して、入力、直近10件の出力、過去の合計や平均の集計、終了の処理が可能
