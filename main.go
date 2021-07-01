@@ -36,7 +36,7 @@ LOOP:
 	for {
 		// モードを選択して実行できるようにする
 		var mode int
-		fmt.Println("[1]入力 [2]最新10件 [3]終了")
+		fmt.Println("[1]入力 [2]最新10件 [3]集計 [4]終了")
 		fmt.Print("> ")
 		fmt.Scan(&mode)
 
@@ -63,7 +63,14 @@ LOOP:
 				break LOOP
 			}
 			showItems(items)
-		case 3: // 終了
+		case 3: // 集計
+			summaries, err := ab.GetSummaries()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "エラー", err)
+				break LOOP
+			}
+			showSummary(summaries)
+		case 4: // 終了
 			fmt.Println("終了します")
 			os.Exit(0)
 		}
