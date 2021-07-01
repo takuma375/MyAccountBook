@@ -122,3 +122,13 @@ type Summary struct {
 	Count    int
 	Sum      int
 }
+
+// 平均を取得するメソッドを定義する
+func (s *Summary) Avg() float64 {
+	// Countが0だと除算になるため、そのまま0を返す
+	if s.Count == 0 {
+		return 0
+	}
+	// float64にキャストして返す
+	return float64(s.Sum) / float64(s.Count)
+}
