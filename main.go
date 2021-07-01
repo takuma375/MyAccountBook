@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 
 	//SQLiteのドライバを使うために "github.com/tenntenn/sqlite"をインポートする
@@ -31,4 +33,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	// HandlersをNewHandlersを使って作成する
+	hs := NewHandlers(ab)
+
+	// ハンドラを登録する
+	http.HandleFunc("/", hs.ListHandler)
+	fmt.Println("http://localhost:8080 で起動中...")
+
+	// HTTPサーバーを起動する
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
