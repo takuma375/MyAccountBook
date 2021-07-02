@@ -69,7 +69,7 @@ func (hs *Handlers) ListHandler(w http.ResponseWriter, r *http.Request) {
 // データを保存する処理を行うハンドラを登録する
 func (hs *Handlers) SaveHandler(w http.ResponseWriter, r *http.Request) {
 	// r.MethodがPOST(http.MethodPost)か調べる
-	if r.Method == http.MethodPost {
+	if r.Method != http.MethodPost {
 		code := http.StatusMethodNotAllowed
 		http.Error(w, http.StatusText(code), code)
 		return
