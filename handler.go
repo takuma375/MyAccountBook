@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 	"text/template"
 )
 
@@ -24,6 +25,15 @@ var listTmpl = template.Must(template.New("list").Parse(`<!DOCTYPE html>
 	</head>
 	<body>
 		<h1>家計簿</h1>
+		<h2>入力</h2>
+		<form method="post" action="/save">
+			<label for="category">品目</label>
+			<input name="category" type="text">
+			<label for="price">値段</label>
+			<input name="price" type="number">
+			<input type="submit" value="保存">
+		</form>
+
 		<h2>最新{{len .}}件</h2>
 		{{- if . -}}
 		<table border="1">
@@ -54,4 +64,42 @@ func (hs *Handlers) ListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+// データを保存する処理を行うハンドラを登録する
+func (hs *Handlers) SaveHandler(w http.ResponseWriter, r *http.Request) {
+	// r.MethodがPOST(http.MethodPost)か調べる
+	if r.Method != http.MethodPost {
+		code := http.StatusMethodNotAllowed
+		http.Error(w, http.StatusText(code), code)
+		return
+	}
+
+	// フォームから送られてきた品目を取得して、categoryに入れる
+	category := r.FormValue("category")
+	// categoryが空だったら、品目が指定されていませんと返す
+	if category == "" {
+		http.Error(w, "品目が指定されていません", http.StatusBadRequest)
+		return
+	}
+
+	price, err := strconv.Atoi(r.FormValue("price"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	item := &Item{
+		Category: category,
+		Price:    price,
+	}
+
+	// itemをデータベースに追加する
+	if err := hs.ab.AddItem(item); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// 一覧ページへのリダイレクト
+	http.Redirect(w, r, "/", http.StatusFound)
 }
